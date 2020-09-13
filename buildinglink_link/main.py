@@ -1,3 +1,4 @@
+from collections import defaultdict
 from datetime import datetime, timedelta
 import logging
 import time
@@ -10,6 +11,7 @@ import yaml
 
 BASE_URL = "https://www.buildinglink.com/V2"
 RESERVE_PAGE = "Tenant/Amenities/NewReservation.aspx"
+NAME_MAP = {"Clay": "David Hambrick", "Semmie": "Semmie Kim"}
 
 
 def load_page(driver, page):
@@ -28,11 +30,15 @@ def load_page(driver, page):
     password_box.clear()
     password_box.send_keys(creds["password"])
     password_box.send_keys(Keys.ENTER)
-    #driver.get(page)
 
 
-def next_day_schedule(now):
-    return [("11:15", ("Semmie Kim",))]
+def next_day_schedule(today):
+    schedule = yaml.load(resource_stream("buildinglink_link", "config/schedule.yaml"))
+    tomorrow_day_of_week = (today.date() + timedelta(days=1)).strftime("%A")
+    tomorrow_schedule = defaultdict(list)
+    for person, timeslot in schedule.get(tomorrow_day_of_week, {}).items():
+        tomorrow_schedule[timeslot].append(NAME_MAP[person])
+    return tomorrow_schedule.items()
 
 
 def main():
