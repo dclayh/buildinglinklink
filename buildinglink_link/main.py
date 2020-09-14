@@ -44,15 +44,22 @@ def next_day_schedule(today):
 def main():
     driver = webdriver.Firefox()
     driver.implicitly_wait(10)
-    load_page(driver, f"{BASE_URL}/{RESERVE_PAGE}")
     tomorrow_str = (datetime.now() + timedelta(days=1)).strftime("%A, %B %d, %Y")
     for timeslot, people in next_day_schedule(datetime.now()):
+        load_page(driver, f"{BASE_URL}/{RESERVE_PAGE}")
         driver.find_element_by_partial_link_text(f"[12th Floor] Fitness Center ({timeslot}").click()
-        driver.find_element_by_id("ctl00_ContentPlaceHolder1_OccupantList").click()
+        occupant_dropdown = driver.find_element_by_id("ctl00_ContentPlaceHolder1_OccupantList")
+        occupant_dropdown.click()
         for resident in driver.find_element_by_id("ctl00_ContentPlaceHolder1_OccupantList_DropDown").find_elements_by_tag_name("label"):
             res_input = resident.find_element_by_tag_name("input")
             if (resident.text in people) ^ (res_input.is_selected()):
                 res_input.click()
+        occupant_dropdown.click()
+        time.sleep(2)
         driver.find_element_by_xpath(f"//td[@title='{tomorrow_str}']").click()
         driver.find_element_by_id("ctl00_ContentPlaceHolder1_liabilityWaiverAgreeTextbox").send_keys("Yes")
-        #driver.find_element_by_id("ctl00_ContentPlaceHolder1_FooterSaveButton").click()
+        time.sleep(2)
+        save_button = driver.find_element_by_id("ctl00_ContentPlaceHolder1_FooterSaveButton")
+        save_button.find_element_by_tag_name("span").click()
+    time.sleep(5)
+    driver.quit()
