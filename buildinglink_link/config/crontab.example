@@ -1,0 +1,2 @@
+PATH=/usr/local/bin:/usr/bin:/bin:$PATH
+2 3 * * *	/home/dclayh/.local/share/virtualenvs/buildinglinklink-ZSxffuRw/bin/run_bll &>> /home/dclayh/run_bll.log
