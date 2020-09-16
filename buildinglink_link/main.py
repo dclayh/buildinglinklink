@@ -42,10 +42,12 @@ def next_day_schedule(today):
 
 
 def main():
+    logging.basicConfig(level=logging.INFO)
     driver = webdriver.Firefox()
     driver.implicitly_wait(10)
     tomorrow_str = (datetime.now() + timedelta(days=1)).strftime("%A, %B %d, %Y")
     for timeslot, people in next_day_schedule(datetime.now()):
+        logging.info("Registering %s for %s on %s.", people, timeslot, tomorrow_str)
         load_page(driver, f"{BASE_URL}/{RESERVE_PAGE}")
         driver.find_element_by_partial_link_text(f"[12th Floor] Fitness Center ({timeslot}").click()
         occupant_dropdown = driver.find_element_by_id("ctl00_ContentPlaceHolder1_OccupantList")
