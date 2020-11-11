@@ -71,5 +71,5 @@ def main():
         time.sleep(2)
         save_button = driver.find_element_by_id("ctl00_ContentPlaceHolder1_FooterSaveButton")
         save_button.find_element_by_tag_name("span").click()
-    time.sleep(5)
+        time.sleep(5)
     driver.quit()
